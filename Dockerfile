@@ -12,4 +12,4 @@ ENV LC_ALL="nb_NO.UTF-8"
 ENV LANG="nb_NO.UTF-8"
 ENV TZ="Europe/Oslo"
 
-CMD ["java", "-XX:+UseParallelGC", "-jar", "app.jar"]
+CMD ["java", "-XX:+UseParallelGC", "-jar", "devtools.jar"]
