@@ -1,0 +1,6 @@
+kafka:
+  brokers: ${KAFKA_BROKERS}
+  ssl:
+    truststorePath: ${KAFKA_TRUSTSTORE_PATH}
+    keystorePath: ${KAFKA_KEYSTORE_PATH}
+    credstorePsw: ${KAFKA_CREDSTORE_PASSWORD}

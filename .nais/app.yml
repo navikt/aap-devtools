@@ -1,0 +1,37 @@
+apiVersion: nais.io/v1alpha1
+kind: Application
+metadata:
+  name: devtools
+  namespace: aap
+  labels:
+    team: aap
+spec:
+  image: {{image}}
+  secureLogs:
+    enabled: true
+  kafka:
+    pool: {{kafka.pool}}
+  ingresses:
+    - {{ingress}}
+  replicas:
+    cpuThresholdPercentage: 90
+    disableAutoScaling: true
+    max: 1
+    min: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+  liveness:
+    path: /actuator/live
+    initialDelay: 1
+    periodSeconds: 1
+    failureThreshold: 10
+  readiness:
+    path: /actuator/ready
+    initialDelay: 1
+    periodSeconds: 1
+    failureThreshold: 10
