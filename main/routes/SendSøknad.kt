@@ -8,7 +8,6 @@ import kafka.SøknadKafkaDto
 import kafka.Topics
 import kafka.produce
 import org.apache.kafka.clients.producer.Producer
-import java.time.LocalDate
 
 internal fun Route.sendSøknad(søknadProducer: Producer<String, SøknadKafkaDto>) {
     get("/søknad/{personident}") {
@@ -20,12 +19,12 @@ internal fun Route.sendSøknad(søknadProducer: Producer<String, SøknadKafkaDto
         call.respondText("Søknad $søknad mottatt!")
     }
 
-    get("/søknad/{personident}/{alder}") {
+    get("/søknad/{personident}/{partition}") {
         val personident = call.parameters.getOrFail("personident")
-        val alder = call.parameters.getOrFail<Long>("alder")
-        val søknad = SøknadKafkaDto(fødselsdato = LocalDate.now().minusYears(alder))
+        val partition = call.parameters.getOrFail<Int>("partition")
+        val søknad = SøknadKafkaDto()
 
-        søknadProducer.produce(Topics.søknad, personident, søknad)
+        søknadProducer.produce(Topics.søknad, partition, personident, søknad)
 
         call.respondText("Søknad $søknad mottatt!")
     }
