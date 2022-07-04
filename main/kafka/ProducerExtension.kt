@@ -10,12 +10,12 @@ import org.slf4j.LoggerFactory
 private val secureLog: Logger = LoggerFactory.getLogger("secureLog")
 
 internal fun <V> Producer<String, V>.produce(topic: Topic<V>, key: String, value: V) {
-    val partition = key.toInt().mod(12)
+    val partition = key.toLong().mod(12)
     produce(topic, partition, key, value)
 }
 
 internal fun <V> Producer<String, V>.tombstone(topic: Topic<V>, key: String) {
-    val partition = key.toInt().mod(12)
+    val partition = key.toLong().mod(12)
     tombstone(topic, partition, key)
 }
 
