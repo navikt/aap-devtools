@@ -10,13 +10,15 @@ import kafka.KafkaManager
 import kafka.KafkaResult
 import kafka.SpecificRequest
 
-internal fun Route.topic(manager: KafkaManager) {
+internal fun Route.topics(manager: KafkaManager) {
     route("/topics") {
         get {
             call.respond(manager.topicNames())
         }
     }
+}
 
+internal fun Route.topic(manager: KafkaManager) {
     route("/topic/{topic}/{direction}") {
         get {
             val request = AllPartitionRequest(

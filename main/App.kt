@@ -10,6 +10,7 @@ import no.nav.aap.kafka.streams.Topic
 import no.nav.aap.kafka.vanilla.KafkaConfig
 import no.nav.aap.ktor.config.loadConfig
 import org.apache.kafka.common.serialization.Serdes
+import routes.*
 import routes.actuator
 import routes.søker
 import routes.søknad
@@ -50,6 +51,7 @@ internal fun Application.server() {
         actuator()
         søker(manager)
         søknad(manager)
+        topics(manager)
         topic(manager)
     }
 }
