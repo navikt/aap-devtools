@@ -7,6 +7,7 @@ import io.ktor.server.routing.*
 import io.ktor.server.util.*
 import kafka.AllPartitionRequest
 import kafka.KafkaManager
+import kafka.KafkaResult
 import kafka.SpecificRequest
 
 internal fun Route.topic(manager: KafkaManager) {
@@ -23,7 +24,8 @@ internal fun Route.topic(manager: KafkaManager) {
                 direction = call.parameters.getOrFail("direction").let(::enumValueOf),
             )
 
-            call.respond(manager.read(request))
+            val response: List<KafkaResult> = manager.read(request)
+            call.respond(response)
         }
 
         get("/{partition}/{offset}") {
@@ -34,7 +36,7 @@ internal fun Route.topic(manager: KafkaManager) {
                 offset = call.parameters.getOrFail("offset").toLong()
             )
 
-            when (val response = manager.lookup(request)) {
+            when (val response: KafkaResult? = manager.lookup(request)) {
                 null -> call.respondText("Melding finnes ikke", status = HttpStatusCode.NotFound)
                 else -> call.respond(response)
             }

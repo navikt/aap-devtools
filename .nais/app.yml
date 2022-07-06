@@ -13,6 +13,10 @@ spec:
     pool: {{kafka.pool}}
   ingresses:
     - {{ingress}}
+  accessPolicy:
+    inbound:
+      rules:
+        - application: vaktmester
   replicas:
     cpuThresholdPercentage: 90
     disableAutoScaling: true
