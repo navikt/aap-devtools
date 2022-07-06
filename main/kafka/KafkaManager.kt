@@ -31,7 +31,7 @@ internal class KafkaManager(config: KafkaConfig) {
             )
         }
 
-    internal fun lookup(request: SpecificRequest): KafkaResult? = consumer(request.topic).use { consumer ->
+    internal fun lookup(request: SpecificRequest): KafkaResult? = consumer(request.topic).let { consumer ->
         val partition = TopicPartition(request.topic, request.partition)
         consumer.assign(listOf(partition))
         consumer.seek(partition, request.offset)
@@ -39,7 +39,7 @@ internal class KafkaManager(config: KafkaConfig) {
     }
 
     internal fun read(request: AllPartitionRequest, limit: Int = 60): List<KafkaResult> =
-        consumer(request.topic).use { consumer ->
+        consumer(request.topic).let { consumer ->
             val partitions = request.partitions.map { TopicPartition(request.topic, it) }
             consumer.assign(partitions)
 
