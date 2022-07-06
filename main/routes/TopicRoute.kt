@@ -9,6 +9,7 @@ import kafka.AllPartitionRequest
 import kafka.KafkaManager
 import kafka.KafkaResult
 import kafka.SpecificRequest
+import java.util.*
 
 internal fun Route.topics(manager: KafkaManager) {
     route("/topics") {
@@ -23,7 +24,7 @@ internal fun Route.topic(manager: KafkaManager) {
         get {
             val request = AllPartitionRequest(
                 topic = call.parameters.getOrFail("topic"),
-                direction = call.parameters.getOrFail("direction").let(::enumValueOf),
+                direction = call.parameters.getOrFail("direction").uppercase().let(::enumValueOf),
             )
 
             val response: List<KafkaResult> = manager.read(request)
@@ -33,7 +34,7 @@ internal fun Route.topic(manager: KafkaManager) {
         get("/{partition}/{offset}") {
             val request = SpecificRequest(
                 topic = call.parameters.getOrFail("topic"),
-                direction = call.parameters.getOrFail("direction").let(::enumValueOf),
+                direction = call.parameters.getOrFail("direction").uppercase().let(::enumValueOf),
                 partition = call.parameters.getOrFail("partition").toInt(),
                 offset = call.parameters.getOrFail("offset").toLong()
             )
