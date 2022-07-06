@@ -17,7 +17,6 @@ data class AllPartitionRequest(
 
 data class SpecificRequest(
     val topic: String,
-    val direction: ResetPolicy,
     val partition: Int,
     val offset: Long = 0,
 )

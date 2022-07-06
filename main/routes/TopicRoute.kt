@@ -19,8 +19,8 @@ internal fun Route.topics(manager: KafkaManager) {
 }
 
 internal fun Route.topic(manager: KafkaManager) {
-    route("/topic/{topic}/{direction}") {
-        get {
+    route("/topic/{topic}") {
+        get("/{direction}") {
             val request = AllPartitionRequest(
                 topic = call.parameters.getOrFail("topic"),
                 direction = call.parameters.getOrFail("direction").uppercase().let(::enumValueOf),
@@ -33,7 +33,6 @@ internal fun Route.topic(manager: KafkaManager) {
         get("/{partition}/{offset}") {
             val request = SpecificRequest(
                 topic = call.parameters.getOrFail("topic"),
-                direction = call.parameters.getOrFail("direction").uppercase().let(::enumValueOf),
                 partition = call.parameters.getOrFail("partition").toInt(),
                 offset = call.parameters.getOrFail("offset").toLong()
             )

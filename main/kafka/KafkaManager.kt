@@ -61,10 +61,10 @@ internal class KafkaManager(private val config: KafkaConfig) {
     private fun consumer(topic: String) = KafkaFactory.createConsumer(config, topicNameToTopic[topic]!!)
     private fun producer(topic: String) = KafkaFactory.createProducer(config, topicNameToTopic[topic]!!)
 
-    private fun ConsumerRecord<String, String>.toResult(): KafkaResult = KafkaResult(
+    private fun ConsumerRecord<String, String?>.toResult(): KafkaResult = KafkaResult(
         topic = topic(),
         key = key(),
-        value = value(),
+        value = value() ?: "tombstone",
         partition = partition(),
         offset = offset(),
         timestamp = timestamp(),
