@@ -9,7 +9,6 @@ import kafka.AllPartitionRequest
 import kafka.KafkaManager
 import kafka.KafkaResult
 import kafka.SpecificRequest
-import java.util.*
 
 internal fun Route.topics(manager: KafkaManager) {
     route("/topics") {

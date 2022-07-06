@@ -11,10 +11,6 @@ import no.nav.aap.kafka.vanilla.KafkaConfig
 import no.nav.aap.ktor.config.loadConfig
 import org.apache.kafka.common.serialization.Serdes
 import routes.*
-import routes.actuator
-import routes.søker
-import routes.søknad
-import routes.topic
 
 fun main() {
     embeddedServer(Netty, port = 8080, module = Application::server).start(wait = true)
@@ -42,10 +38,6 @@ internal fun Application.server() {
 
     val config = loadConfig<Config>()
     val manager = KafkaManager(config.kafka)
-
-    environment.monitor.subscribe(ApplicationStopping) {
-        manager.close()
-    }
 
     routing {
         actuator()
