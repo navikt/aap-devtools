@@ -5,42 +5,51 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.routing.*
-import kafka.SøknadKafkaDto
-import kafka.Topics
+import kafka.KafkaManager
+import no.nav.aap.kafka.streams.Topic
 import no.nav.aap.kafka.vanilla.KafkaConfig
-import no.nav.aap.kafka.vanilla.KafkaFactory
 import no.nav.aap.ktor.config.loadConfig
-import org.apache.kafka.clients.producer.Producer
+import org.apache.kafka.common.serialization.Serdes
 import routes.actuator
-import routes.deleteSøker
-import routes.sendSøknad
+import routes.søker
+import routes.søknad
+import routes.topic
 
 fun main() {
     embeddedServer(Netty, port = 8080, module = Application::server).start(wait = true)
 }
 
-internal data class Config(val kafka: KafkaConfig)
+internal data class Config(
+    val kafka: KafkaConfig,
+)
 
-internal object Kafka : KafkaFactory
+object Topics {
+    val søker = Topic("aap.sokere.v1", Serdes.StringSerde())
+    val søknad = Topic("aap.soknad-sendt.v1", Serdes.StringSerde())
+}
 
 internal fun Application.server() {
-    install(ContentNegotiation) { jackson { registerModule(JavaTimeModule()) } }
+    Thread.currentThread().setUncaughtExceptionHandler { _, e ->
+        log.error("Uhåndtert feil", e)
+    }
+
+    install(ContentNegotiation) {
+        jackson {
+            registerModule(JavaTimeModule())
+        }
+    }
 
     val config = loadConfig<Config>()
-
-    val søknadProducer: Producer<String, SøknadKafkaDto> = Kafka.createProducer(config.kafka, Topics.søknad)
-    val søkerProducer: Producer<String, ByteArray> = Kafka.createProducer(config.kafka, Topics.søker)
-
-    Thread.currentThread().setUncaughtExceptionHandler { _, e -> log.error("Uhåndtert feil", e) }
+    val manager = KafkaManager(config.kafka)
 
     environment.monitor.subscribe(ApplicationStopping) {
-        søknadProducer.close()
-        søkerProducer.close()
+        manager.close()
     }
 
     routing {
         actuator()
-        deleteSøker(søkerProducer, søknadProducer)
-        sendSøknad(søknadProducer)
+        søker(manager)
+        søknad(manager)
+        topic(manager)
     }
 }
