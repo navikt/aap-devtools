@@ -32,8 +32,13 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.3")
     implementation("ch.qos.logback:logback-classic:1.2.11")
     implementation("net.logstash.logback:logstash-logback-encoder:7.2")
-}
 
+    testImplementation(kotlin("test"))
+    testImplementation("com.github.navikt.aap-libs:kafka-test:$aapLibVersion")
+    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
+    testImplementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+
+}
 
 tasks {
     withType<KotlinCompile> {

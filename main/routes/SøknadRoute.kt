@@ -8,25 +8,35 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.util.*
 import kafka.KafkaManager
+import ktor.personident
 
 internal fun Route.søknad(manager: KafkaManager) {
     route("/søknad/{personident}") {
         delete {
-            val personident = call.parameters.getOrFail("personident")
-            manager.produce(Topics.søknad, personident, null)
-            call.respondText("Søknad $personident slettet")
+            manager.produce(
+                topic = Topics.søknad,
+                key = call.parameters.personident,
+                value = null
+            )
+
+            call.respondText("Søknad slettet")
         }
 
         post {
-            val personident = call.parameters.getOrFail("personident")
             val søknad = call.receiveText()
 
-            require(jackson.readTree(søknad).has("fødselsdato")) { "Søknad må inneholde fødselsdato" }
+            require(jackson.readTree(søknad).has("fødselsdato")) {
+                "Søknad må inneholde fødselsdato"
+            }
 
-            manager.produce(Topics.søknad, personident, søknad)
-            call.respondText("Søknad for $personident mottatt")
+            manager.produce(
+                topic = Topics.søknad,
+                key = call.parameters.personident,
+                value = søknad.encodeToByteArray(),
+            )
+
+            call.respondText("Søknad for mottatt")
         }
     }
 }

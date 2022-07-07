@@ -1,43 +1,45 @@
 package routes
 
+import Topics
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.server.util.*
-import kafka.AllPartitionRequest
 import kafka.KafkaManager
+import kafka.KafkaRequest
 import kafka.KafkaResult
 import kafka.SpecificRequest
-
-internal fun Route.topics(manager: KafkaManager) {
-    route("/topics") {
-        get {
-            call.respond(manager.topicNames())
-        }
-    }
-}
+import ktor.direction
+import ktor.offset
+import ktor.partition
+import ktor.topic
 
 internal fun Route.topic(manager: KafkaManager) {
+    route("/topics") {
+        get {
+            call.respond(Topics.all.keys)
+        }
+    }
+
     route("/topic/{topic}") {
         get("/{direction}") {
-            val request = AllPartitionRequest(
-                topic = call.parameters.getOrFail("topic"),
-                direction = call.parameters.getOrFail("direction").uppercase().let(::enumValueOf),
+            val request = KafkaRequest(
+                topic = call.parameters.topic,
+                direction = call.parameters.direction,
             )
 
-            val response: List<KafkaResult> = manager.read(request)
+            val response: List<KafkaResult> = manager.read(request, 60)
             call.respond(response)
         }
 
         get("/{partition}/{offset}") {
             val request = SpecificRequest(
-                topic = call.parameters.getOrFail("topic"),
-                partition = call.parameters.getOrFail("partition").toInt(),
-                offset = call.parameters.getOrFail("offset").toLong()
+                topic = call.parameters.topic,
+                partition = call.parameters.partition,
+                offset = call.parameters.offset,
             )
 
-            when (val response: KafkaResult? = manager.lookup(request)) {
+            when (val response: KafkaResult? = manager.read(request)) {
                 null -> call.respondText("Melding finnes ikke", status = HttpStatusCode.NotFound)
                 else -> call.respond(response)
             }
