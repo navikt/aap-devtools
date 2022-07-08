@@ -1,6 +1,5 @@
 package routes
 
-import Topics
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -9,6 +8,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kafka.KafkaManager
+import kafka.Topics
 import ktor.personident
 
 internal fun Route.søknad(manager: KafkaManager) {

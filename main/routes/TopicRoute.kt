@@ -1,14 +1,10 @@
 package routes
 
-import Topics
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kafka.KafkaManager
-import kafka.KafkaRequest
-import kafka.KafkaResult
-import kafka.SpecificRequest
+import kafka.*
 import ktor.direction
 import ktor.offset
 import ktor.partition

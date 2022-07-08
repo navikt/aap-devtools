@@ -25,12 +25,7 @@ internal data class Config(
     val kafka: KafkaConfig,
 )
 
-object Topics {
-    val søker = Topic("aap.sokere.v1", Serdes.ByteArraySerde())
-    val søknad = Topic("aap.soknad-sendt.v1", Serdes.ByteArraySerde())
 
-    val all = listOf(søker, søknad).associateBy { it.name }
-}
 
 internal fun Application.server(kafka: KafkaFactory = Kafka) {
     Thread.currentThread().setUncaughtExceptionHandler { _, e ->

@@ -1,10 +1,10 @@
 package routes
 
-import Topics
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kafka.KafkaManager
+import kafka.Topics
 import ktor.personident
 
 internal fun Route.søker(manager: KafkaManager) {

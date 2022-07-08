@@ -7,6 +7,7 @@ import io.ktor.server.config.*
 import io.ktor.server.testing.*
 import kafka.KafkaMock
 import kafka.KafkaResult
+import kafka.Topics
 import no.nav.aap.kafka.vanilla.KafkaConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
@@ -43,8 +44,28 @@ internal class DevtoolsTest {
             application { server(KafkaMock()) }
             val client = createClient { install(ContentNegotiation) { jackson() } }
             val response = client.get("/topics")
+
+            val expected = setOf(
+                "aap.sokere.v1",
+                "aap.soknad-sendt.v1",
+                "aap.sokere.v1",
+                "aap.soknad-sendt.v1",
+                "aap.inntekter.v1",
+                "aap.manuell.11-2.v1",
+                "aap.manuell.11-3.v1",
+                "aap.manuell.11-4.v1",
+                "aap.manuell.11-5.v1",
+                "aap.manuell.11-6.v1",
+                "aap.manuell.11-12.v1",
+                "aap.manuell.11-29.v1",
+                "aap.manuell.beregningsdato.v1",
+                "aap.vedtak.v1",
+                "aap.personopplysninger.v1",
+                "aap.mottakere.v1",
+                "aap.utbetalingsbehov.v1",
+            )
+            assertEquals(expected, response.body<Set<String>>())
             assertEquals(HttpStatusCode.OK, response.status)
-            assertEquals(setOf("aap.sokere.v1", "aap.soknad-sendt.v1"), response.body<Set<String>>())
         }
     }
 

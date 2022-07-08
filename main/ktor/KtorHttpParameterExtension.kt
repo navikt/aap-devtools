@@ -1,9 +1,9 @@
 package ktor
 
-import Topics
 import io.ktor.http.*
 import io.ktor.server.util.*
 import kafka.ResetPolicy
+import kafka.Topics
 import no.nav.aap.kafka.streams.Topic
 
 internal val Parameters.direction: ResetPolicy get() = getOrFail("direction").uppercase().let(::enumValueOf)
