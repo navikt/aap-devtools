@@ -34,7 +34,7 @@ internal class KafkaManager(
         val partition = TopicPartition(request.topic.name, request.partition)
         consumer.assign(listOf(partition))
         consumer.seek(partition, request.offset)
-        return consumer.poll(Duration.ofMillis(100)).firstOrNull()?.toResult()
+        return consumer.poll(Duration.ofMillis(2000)).firstOrNull()?.toResult()
     }
 
     internal fun read(request: KafkaRequest, limit: Int): List<KafkaResult> = consumer(request.topic).use { consumer ->
@@ -48,7 +48,7 @@ internal class KafkaManager(
 
         val results = mutableListOf<KafkaResult>()
         while (results.size < limit) {
-            val records = consumer.poll(Duration.ofMillis(100))
+            val records = consumer.poll(Duration.ofMillis(2000))
             if (records.isEmpty) break
             partitions.forEach {
                 val resultsForPartition = records.records(it).map { record -> record.toResult() }
