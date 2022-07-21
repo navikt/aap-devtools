@@ -55,7 +55,7 @@ tasks {
 
 configurations.all {
     resolutionStrategy {
-        force("org.apache.kafka:kafka-clients:3.2.0")
+        force("org.apache.kafka:kafka-clients:7.2.1-ce")
     }
 }
 
