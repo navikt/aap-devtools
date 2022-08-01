@@ -16,7 +16,7 @@ repositories {
     maven("https://packages.confluent.io/maven/")
 }
 
-val aapLibVersion = "2.1.10"
+val aapLibVersion = "3.1.5"
 val ktorVersion = "2.0.3"
 
 dependencies {
