@@ -60,6 +60,7 @@ internal class DevtoolsTest {
                 "aap.manuell.11-29.v1",
                 "aap.manuell.beregningsdato.v1",
                 "aap.vedtak.v1",
+                "aap.medlem.v1",
                 "aap.personopplysninger.v1",
                 "aap.mottakere.v1",
                 "aap.utbetalingsbehov.v1",

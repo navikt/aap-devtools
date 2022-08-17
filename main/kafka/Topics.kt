@@ -16,6 +16,7 @@ object Topics {
     val man11_29 = Topic("aap.manuell.11-29.v1", Serdes.ByteArraySerde())
     val man_beregn = Topic("aap.manuell.beregningsdato.v1", Serdes.ByteArraySerde())
     val vedtak = Topic("aap.vedtak.v1", Serdes.ByteArraySerde())
+    val medlem = Topic("aap.medlem.v1", Serdes.ByteArraySerde())
     val personopplysninger = Topic("aap.personopplysninger.v1", Serdes.ByteArraySerde())
     val mottakere = Topic("aap.mottakere.v1", Serdes.ByteArraySerde())
     val utbetalingsbehov = Topic("aap.utbetalingsbehov.v1", Serdes.ByteArraySerde())
@@ -33,6 +34,7 @@ object Topics {
         man11_29,
         man_beregn,
         vedtak,
+        medlem,
         personopplysninger,
         mottakere,
         utbetalingsbehov,
