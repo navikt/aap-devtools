@@ -21,7 +21,6 @@ object Topics {
     val mottakere = Topic("aap.mottakere.v1", Serdes.ByteArraySerde())
     val utbetalingsbehov = Topic("aap.utbetalingsbehov.v1", Serdes.ByteArraySerde())
     val sykepengedager = Topic("aap.sykepengedager.v1", Serdes.ByteArraySerde())
-    val sykepengedagerSpleis = Topic("aap.sykepengedager.spleis.v1", Serdes.ByteArraySerde())
     val sykepengedagerInfotrygd = Topic("aap.sykepengedager.infotrygd.v1", Serdes.ByteArraySerde())
     val sykepengedagerInfotrygdQ1 = Topic("aap.sykepengedager.infotrygd-q1.v1", Serdes.ByteArraySerde())
 
@@ -43,7 +42,6 @@ object Topics {
         mottakere,
         utbetalingsbehov,
         sykepengedager,
-        sykepengedagerSpleis,
         sykepengedagerInfotrygd,
         sykepengedagerInfotrygdQ1,
     ).associateBy { it.name }

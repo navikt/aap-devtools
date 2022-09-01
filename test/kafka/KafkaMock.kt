@@ -3,10 +3,7 @@ package kafka
 import no.nav.aap.kafka.streams.Topic
 import no.nav.aap.kafka.vanilla.KafkaConfig
 import no.nav.aap.kafka.vanilla.KafkaFactory
-import org.apache.kafka.clients.consumer.ConsumerRecord
-import org.apache.kafka.clients.consumer.ConsumerRecords
-import org.apache.kafka.clients.consumer.MockConsumer
-import org.apache.kafka.clients.consumer.OffsetResetStrategy
+import org.apache.kafka.clients.consumer.*
 import org.apache.kafka.clients.producer.Callback
 import org.apache.kafka.clients.producer.MockProducer
 import org.apache.kafka.clients.producer.ProducerRecord
@@ -84,6 +81,21 @@ internal class KafkaMock : KafkaFactory {
                 offsetByPartition += it.partition() to endOffset
             }
             super.seekToEnd(partitions)
+        }
+
+        override fun offsetsForTimes(timestampsToSearch: Map<TopicPartition, Long>): Map<TopicPartition, OffsetAndTimestamp> {
+            return timestampsToSearch.mapValues { (topicPartition, timestamp) ->
+                val topic = Topics.all[topicPartition.topic()] ?: error("ukjent topic")
+
+                val recordsAfterTimestamp = recordsPerTopic[topic]
+                    ?.filter { record -> record.partition() == topicPartition.partition() }
+                    ?.filter { record -> record.timestamp() >= timestamp }
+                    ?: emptyList()
+
+                val offset = recordsAfterTimestamp.minOfOrNull { it.offset() } ?: 0
+
+                OffsetAndTimestamp(offset, timestamp)
+            }
         }
     }
 }

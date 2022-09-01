@@ -65,7 +65,6 @@ internal class DevtoolsTest {
                 "aap.mottakere.v1",
                 "aap.utbetalingsbehov.v1",
                 "aap.sykepengedager.v1",
-                "aap.sykepengedager.spleis.v1",
                 "aap.sykepengedager.infotrygd.v1",
                 "aap.sykepengedager.infotrygd-q1.v1",
             )

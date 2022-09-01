@@ -41,9 +41,17 @@ internal class KafkaManager(
         val partitions = request.partitions.map { TopicPartition(request.topic.name, it) }
         consumer.assign(partitions)
 
+        fun resetToLatest() {
+            val partitionsForEpochMs = partitions.associateWith { request.fromEpochMillis }
+            val partitionsByOffsetAndTimestamp = consumer.offsetsForTimes(partitionsForEpochMs)
+            partitionsByOffsetAndTimestamp.onEach { (p, oat) -> consumer.seek(p, oat.offset()) }
+        }
+
+        fun resetToEarliest() = consumer.seekToBeginning(partitions)
+
         when (request.direction) {
-            ResetPolicy.LATEST -> consumer.seekToEnd(partitions)
-            ResetPolicy.EARLIEST -> consumer.seekToBeginning(partitions)
+            ResetPolicy.LATEST -> resetToLatest()
+            ResetPolicy.EARLIEST -> resetToEarliest()
         }
 
         val results = mutableListOf<KafkaResult>()
