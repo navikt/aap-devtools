@@ -5,6 +5,7 @@ import no.nav.aap.kafka.streams.Topic
 import no.nav.aap.kafka.vanilla.KafkaConfig
 import no.nav.aap.kafka.vanilla.KafkaFactory
 import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.clients.consumer.OffsetAndTimestamp
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.common.TopicPartition
 import org.slf4j.Logger
@@ -43,8 +44,11 @@ internal class KafkaManager(
 
         fun resetToLatest() {
             val partitionsForEpochMs = partitions.associateWith { request.fromEpochMillis }
-            val partitionsByOffsetAndTimestamp = consumer.offsetsForTimes(partitionsForEpochMs)
-            partitionsByOffsetAndTimestamp.onEach { (p, oat) -> consumer.seek(p, oat.offset()) }
+
+            val partitionsByOffsetAndTimestamp: MutableMap<TopicPartition, OffsetAndTimestamp?> =
+                consumer.offsetsForTimes(partitionsForEpochMs)
+
+            partitionsByOffsetAndTimestamp.onEach { (p, oat) -> if (oat != null) consumer.seek(p, oat.offset()) }
         }
 
         fun resetToEarliest() = consumer.seekToBeginning(partitions)
