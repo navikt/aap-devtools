@@ -46,8 +46,12 @@ data class KafkaRequest(
     val topic: Topic<ByteArray>,
     val direction: ResetPolicy,
     val partitions: List<Int> = listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11),
-    val fromEpochMillis: Long = LocalDateTime.now().minusMinutes(15).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
-)
+    val fromEpochMillis: Long = DEFAULT_EPOCH_MS
+) {
+    companion object {
+        val DEFAULT_EPOCH_MS = LocalDateTime.now().minusMinutes(15).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    }
+}
 
 data class SpecificRequest(
     val topic: Topic<ByteArray>,

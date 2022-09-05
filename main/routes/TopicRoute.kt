@@ -22,6 +22,7 @@ internal fun Route.topic(manager: KafkaManager) {
             val request = KafkaRequest(
                 topic = call.parameters.topic,
                 direction = call.parameters.direction,
+                fromEpochMillis = call.request.queryParameters["fom_ms"]?.toLong() ?: KafkaRequest.DEFAULT_EPOCH_MS,
             )
 
             val response: List<KafkaResult> = manager.read(request, 60)
