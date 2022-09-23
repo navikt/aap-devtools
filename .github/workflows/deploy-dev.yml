@@ -21,7 +21,7 @@ jobs:
           java-version: 18
           distribution: 'temurin'
 
-      - uses: gradle/gradle-build-action@v2.2.1
+      - uses: gradle/gradle-build-action@v2.3.1
         with:
           arguments: shadowJar --no-daemon --no-build-cache
 
