@@ -27,7 +27,7 @@ fun main() {
 
 internal data class Config(
     val kafka: KafkaConfig,
-    val dollyConfig: DollyConfig,
+    val dolly: DollyConfig,
     val azure: AzureConfig,
 )
 
@@ -46,7 +46,7 @@ internal fun Application.server(kafka: KafkaFactory = Kafka) {
 
     val config = loadConfig<Config>()
     val manager = KafkaManager(config.kafka, kafka)
-    val dollyClient = DollyClient(config.dollyConfig, config.azure)
+    val dollyClient = DollyClient(config.dolly, config.azure)
 
     routing {
         actuator()
