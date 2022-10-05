@@ -9,12 +9,10 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.routing.*
 import kafka.Kafka
 import kafka.KafkaManager
-import no.nav.aap.kafka.streams.Topic
 import no.nav.aap.kafka.vanilla.KafkaConfig
 import no.nav.aap.kafka.vanilla.KafkaFactory
 import no.nav.aap.ktor.client.AzureConfig
 import no.nav.aap.ktor.config.loadConfig
-import org.apache.kafka.common.serialization.Serdes
 import routes.*
 import routes.actuator
 import routes.søker
