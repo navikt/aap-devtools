@@ -277,4 +277,11 @@ private val envVars = MapApplicationConfig(
     "KAFKA_TRUSTSTORE_PATH" to "",
     "KAFKA_KEYSTORE_PATH" to "",
     "KAFKA_CREDSTORE_PASSWORD" to "",
+    "AZURE_OPENID_CONFIG_ISSUER" to "",
+    "AZURE_APP_CLIENT_ID" to "",
+    "AZURE_OPENID_CONFIG_JWKS_URI" to "",
+    "AZURE_OPENID_CONFIG_TOKEN_ENDPOINT" to "",
+    "AZURE_APP_CLIENT_SECRET" to "",
+    "DOLLY_SCOPE" to "",
+    "DOLLY_URL" to ""
 )

@@ -2,3 +2,7 @@ ingress: https://aap-devtools.dev.intern.nav.no
 
 kafka:
   pool: nav-dev
+
+dolly:
+  url: https://dolly-backend.dev.intern.nav.no/api/v1
+  scope: api://cf878fa5-aa6b-4bc5-bb2e-40b27e6c0149/.default

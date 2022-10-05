@@ -4,3 +4,12 @@ kafka:
     truststorePath: ${KAFKA_TRUSTSTORE_PATH}
     keystorePath: ${KAFKA_KEYSTORE_PATH}
     credstorePsw: ${KAFKA_CREDSTORE_PASSWORD}
+
+dolly:
+  url: ${DOLLY_URL}
+  scope: ${DOLLY_SCOPE}
+
+azure:
+  clientId: ${AZURE_APP_CLIENT_ID}
+  tokenEndpoint: ${AZURE_OPENID_CONFIG_TOKEN_ENDPOINT}
+  clientSecret: ${AZURE_APP_CLIENT_SECRET}

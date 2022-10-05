@@ -7,6 +7,10 @@ metadata:
     team: aap
 spec:
   image: {{image}}
+  azure:
+    application:
+      enabled: true
+      tenant: nav.no
   secureLogs:
     enabled: true
   kafka:
@@ -17,6 +21,11 @@ spec:
     inbound:
       rules:
         - application: vaktmester
+    outbound:
+      rules:
+        - application: dolly-backend
+          namespace: dolly
+          cluster: dev-gcp
   replicas:
     cpuThresholdPercentage: 90
     disableAutoScaling: true
@@ -39,3 +48,8 @@ spec:
     initialDelay: 1
     periodSeconds: 1
     failureThreshold: 10
+  env:
+    - name: DOLLY_SCOPE
+      value: {{dolly.scope}}
+    - name: DOLLY_URL
+      value: {{dolly.url}}
