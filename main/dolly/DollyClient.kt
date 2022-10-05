@@ -70,7 +70,7 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
 
         return brukerlisteJson.data.hentPersonBolk.map { DollyResponsePerson(
             fødselsnummer = it.ident,
-            navn = "${it.person.navn.single().fornavn} ${it.person.navn.single().etternavn}"
+            navn = "${it.person.navn.first().fornavn} ${it.person.navn.first().etternavn}"
         ) }
     }
 
