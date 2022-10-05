@@ -1,10 +1,7 @@
 package dolly
 
 import com.fasterxml.jackson.databind.*
-import com.fasterxml.jackson.databind.json.JsonMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
-import com.fasterxml.jackson.module.kotlin.KotlinFeature
-import com.fasterxml.jackson.module.kotlin.KotlinModule
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.engine.cio.*
@@ -27,25 +24,6 @@ data class DollyConfig(
 
 private val log = LoggerFactory.getLogger(DollyClient::class.java)
 private val secureLog = LoggerFactory.getLogger("secureLog")
-private val objectMapper: ObjectMapper = JsonMapper.builder()
-    .addModule(JavaTimeModule())
-    .addModule(
-        KotlinModule.Builder()
-            .withReflectionCacheSize(512)
-            .configure(KotlinFeature.NullToEmptyCollection, false)
-            .configure(KotlinFeature.NullToEmptyMap, false)
-            .configure(KotlinFeature.NullIsSameAsDefault, false)
-            .configure(KotlinFeature.SingletonSupport, false)
-            .configure(KotlinFeature.StrictNullChecks, false)
-            .build()
-    )
-    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-    .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
-    .disable(MapperFeature.ALLOW_FINAL_FIELDS_AS_MUTATORS)
-    .enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-    .enable(DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
-    .build()
-private fun Any.toJson(): String = objectMapper.writeValueAsString(this)
 
 class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig) {
     private val tokenProvider = HttpClientAzureAdTokenProvider(azureConfig, dollyConfig.scope)
@@ -67,7 +45,7 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
         }
     }
 
-    suspend fun hentBrukere() {
+    suspend fun hentBrukere(): List<DollyResponsePerson> {
         val token = tokenProvider.getToken()
         val callId = callId
         val brukereForGruppe = httpClient.get(dollyConfig.url.toURL()) {
@@ -88,10 +66,18 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
             header("Nav-Call-Id", callId)
             header("Nav-Consumer-Id", "aap_oppgavestyring")
             bearerAuth(token)
-        }.body<JsonNode>()
+        }.body<DollyResponsePdl>()
 
-        secureLog.info(brukerlisteJson.toJson())
+        return brukerlisteJson.data.hentPersonBolk.map { DollyResponsePerson(
+            fødselsnummer = it.ident,
+            navn = "${it.person.navn.single().fornavn} ${it.person.navn.single().etternavn}"
+        ) }
     }
 
     private val callId: String get() = UUID.randomUUID().toString().also { log.info("calling dolly with call-id $it") }
 }
+
+data class DollyResponsePerson(
+    val fødselsnummer: String,
+    val navn: String
+)
