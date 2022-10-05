@@ -17,7 +17,7 @@ repositories {
 }
 
 val aapLibVersion = "2.1.10"
-val ktorVersion = "2.1.1"
+val ktorVersion = "2.1.2"
 
 dependencies {
     implementation("com.github.navikt.aap-libs:ktor-client-auth:$aapLibVersion")
@@ -27,6 +27,7 @@ dependencies {
     implementation("io.ktor:ktor-server-core:$ktorVersion")
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
+    implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
