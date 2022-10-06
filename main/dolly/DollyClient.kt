@@ -15,6 +15,7 @@ import no.nav.aap.ktor.client.AzureConfig
 import no.nav.aap.ktor.client.HttpClientAzureAdTokenProvider
 import org.slf4j.LoggerFactory
 import java.net.URI
+import java.time.LocalDate
 import java.util.*
 
 data class DollyConfig(
@@ -70,7 +71,8 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
 
         return brukerlisteJson.data.hentPersonBolk.map { DollyResponsePerson(
             fødselsnummer = it.ident,
-            navn = "${it.person.navn.first().fornavn} ${it.person.navn.first().etternavn}"
+            navn = "${it.person.navn.first().fornavn} ${it.person.navn.first().etternavn}",
+            fødselsdato = it.person.foedsel.first().foedselsdato
         ) }
     }
 
@@ -79,5 +81,6 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
 
 data class DollyResponsePerson(
     val fødselsnummer: String,
-    val navn: String
+    val navn: String,
+    val fødselsdato: LocalDate
 )
