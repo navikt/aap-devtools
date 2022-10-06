@@ -34,6 +34,7 @@ object Topics {
     val sykepengedager = Topic("aap.sykepengedager.v1", Serdes.ByteArraySerde())
     val sykepengedagerInfotrygd = Topic("aap.sykepengedager.infotrygd.v1", Serdes.ByteArraySerde())
     val sykepengedagerInfotrygdQ1 = Topic("aap.sykepengedager.infotrygd-q1.v1", Serdes.ByteArraySerde())
+    val meldeplikt = Topic("aap.meldeplikt.v1", Serdes.ByteArraySerde())
 
     val all = listOf(
         søker,
@@ -63,5 +64,6 @@ object Topics {
         sykepengedager,
         sykepengedagerInfotrygd,
         sykepengedagerInfotrygdQ1,
+        meldeplikt
     ).associateBy { it.name }
 }

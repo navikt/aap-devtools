@@ -65,6 +65,7 @@ internal fun Application.server(kafka: KafkaFactory = Kafka) {
         søker(manager)
         søknad(manager)
         topic(manager)
+        meldeplikt(manager)
         dolly(dollyClient)
     }
 }

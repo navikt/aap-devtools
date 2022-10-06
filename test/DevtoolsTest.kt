@@ -75,6 +75,7 @@ internal class DevtoolsTest {
                 "aap.sykepengedager.v1",
                 "aap.sykepengedager.infotrygd.v1",
                 "aap.sykepengedager.infotrygd-q1.v1",
+                "aap.meldeplikt.v1"
             )
             assertEquals(expected, response.body<Set<String>>())
             assertEquals(HttpStatusCode.OK, response.status)
@@ -280,7 +281,7 @@ private val envVars = MapApplicationConfig(
     "AZURE_OPENID_CONFIG_ISSUER" to "",
     "AZURE_APP_CLIENT_ID" to "",
     "AZURE_OPENID_CONFIG_JWKS_URI" to "",
-    "AZURE_OPENID_CONFIG_TOKEN_ENDPOINT" to "",
+    "AZURE_OPENID_CONFIG_TOKEN_ENDPOINT" to "http://localhost",
     "AZURE_APP_CLIENT_SECRET" to "",
     "DOLLY_SCOPE" to "",
     "DOLLY_URL" to ""
