@@ -65,6 +65,7 @@ internal fun Application.server(kafka: KafkaFactory = Kafka) {
         }
         actuator()
         søker(manager)
+        mottaker(manager)
         søknad(manager)
         topic(manager)
         meldeplikt(manager)
