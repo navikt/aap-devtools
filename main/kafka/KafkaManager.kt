@@ -22,7 +22,7 @@ internal class KafkaManager(
         producer.send(ProducerRecord(topic.name, key, value)) { meta, error ->
             if (error != null) secureLog.error("Failed to produce record", error)
             else secureLog.trace(
-                if (value == null) "Tombstoner Topic" else "Produserer til Topic",
+                if (value == null) "Tombstoner ${topic.name}" else "Produserer til ${topic.name}",
                 kv("key", key),
                 kv("topic", topic.name),
                 kv("partition", meta.partition()),
@@ -42,7 +42,7 @@ internal class KafkaManager(
         val partitions = request.partitions.map { TopicPartition(request.topic.name, it) }
         consumer.assign(partitions)
 
-        fun resetToLatest() {
+        fun resetToLatestByTimestamp() {
             val partitionsForEpochMs = partitions.associateWith { request.fromEpochMillis }
 
             val partitionsByOffsetAndTimestamp: MutableMap<TopicPartition, OffsetAndTimestamp?> =
@@ -54,7 +54,7 @@ internal class KafkaManager(
         fun resetToEarliest() = consumer.seekToBeginning(partitions)
 
         when (request.direction) {
-            ResetPolicy.LATEST -> resetToLatest()
+            ResetPolicy.LATEST -> resetToLatestByTimestamp()
             ResetPolicy.EARLIEST -> resetToEarliest()
         }
 

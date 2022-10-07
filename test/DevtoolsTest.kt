@@ -11,8 +11,10 @@ import kafka.Topics
 import no.nav.aap.kafka.vanilla.KafkaConfig
 import org.apache.kafka.clients.producer.ProducerRecord
 import org.apache.kafka.clients.producer.RecordMetadata
+import org.junit.jupiter.api.Assertions.assertArrayEquals
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import routes.TombstoneStatus
 import kotlin.test.assertNull
 
 internal class DevtoolsTest {
@@ -268,6 +270,53 @@ internal class DevtoolsTest {
 
             val actual = response.body<List<KafkaResult>>()
             assertEquals(listOf(expected), actual)
+            assertEquals(HttpStatusCode.OK, response.status)
+        }
+    }
+
+    @Test
+    fun `can delete all`() {
+        val kafka = KafkaMock()
+        val kafkaConfig = KafkaConfig("mock://kafka", null, null)
+        val personident = "7777"
+
+        kafka.createProducer(kafkaConfig, Topics.søknad).use { producer ->
+            val record = ProducerRecord(Topics.søknad.name, 6, personident, "søknad".encodeToByteArray())
+            producer.send(record, assertNoException())
+        }
+
+        kafka.createProducer(kafkaConfig, Topics.søker).use { producer ->
+            val record = ProducerRecord(Topics.søker.name, 6, personident, "søker".encodeToByteArray())
+            producer.send(record, assertNoException())
+        }
+
+        kafka.createProducer(kafkaConfig, Topics.mottakere).use { producer ->
+            val record = ProducerRecord(Topics.mottakere.name, 6, personident, "mottakere".encodeToByteArray())
+            producer.send(record, assertNoException())
+        }
+
+        kafka.createProducer(kafkaConfig, Topics.vedtak).use { producer ->
+            val record = ProducerRecord(Topics.vedtak.name, 6, personident, "vedtak".encodeToByteArray())
+            producer.send(record, assertNoException())
+        }
+
+        testApplication {
+            environment { config = envVars }
+            application { server(kafka) }
+            val client = createClient { install(ContentNegotiation) { jackson() } }
+            val response = client.delete(personident)
+
+            val expected = listOf(
+                TombstoneStatus(Topics.søknad.name, true),
+                TombstoneStatus(Topics.søker.name, true),
+                TombstoneStatus(Topics.mottakere.name, true),
+                TombstoneStatus(Topics.vedtak.name, true),
+            )
+
+            val actual = response.body<List<TombstoneStatus>>()
+
+            assertEquals(4, actual.size)
+            assertEquals(expected.sortedBy { it.topic }, actual.sortedBy { it.topic })
             assertEquals(HttpStatusCode.OK, response.status)
         }
     }

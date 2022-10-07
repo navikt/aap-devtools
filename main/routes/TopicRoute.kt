@@ -4,7 +4,11 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kafka.*
+import kafka.KafkaManager
+import kafka.KafkaRequest
+import kafka.KafkaResult
+import kafka.SpecificRequest
+import kafka.Topics
 import ktor.direction
 import ktor.offset
 import ktor.partition

@@ -2,7 +2,6 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import dolly.DollyClient
 import dolly.DollyConfig
-import io.ktor.client.plugins.logging.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -18,8 +17,11 @@ import no.nav.aap.ktor.client.AzureConfig
 import no.nav.aap.ktor.config.loadConfig
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
-import routes.*
 import routes.actuator
+import routes.deleteAll
+import routes.dolly
+import routes.meldeplikt
+import routes.mottaker
 import routes.søker
 import routes.søknad
 import routes.topic
@@ -35,8 +37,6 @@ internal data class Config(
     val dolly: DollyConfig,
     val azure: AzureConfig,
 )
-
-
 
 internal fun Application.server(kafka: KafkaFactory = Kafka) {
     Thread.currentThread().setUncaughtExceptionHandler { _, e ->
@@ -70,5 +70,6 @@ internal fun Application.server(kafka: KafkaFactory = Kafka) {
         topic(manager)
         meldeplikt(manager)
         dolly(dollyClient)
+        deleteAll(manager)
     }
 }
