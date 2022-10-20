@@ -21,6 +21,7 @@ spec:
     inbound:
       rules:
         - application: vaktmester
+        - application: bot
     outbound:
       rules:
         - application: dolly-backend
