@@ -1,6 +1,6 @@
 package dolly
 
-import com.fasterxml.jackson.databind.*
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -11,8 +11,8 @@ import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
+import no.nav.aap.ktor.client.AzureAdTokenProvider
 import no.nav.aap.ktor.client.AzureConfig
-import no.nav.aap.ktor.client.HttpClientAzureAdTokenProvider
 import org.slf4j.LoggerFactory
 import java.net.URI
 import java.time.LocalDate
@@ -27,7 +27,7 @@ private val log = LoggerFactory.getLogger(DollyClient::class.java)
 private val secureLog = LoggerFactory.getLogger("secureLog")
 
 class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig) {
-    private val tokenProvider = HttpClientAzureAdTokenProvider(azureConfig, dollyConfig.scope)
+    private val tokenProvider = AzureAdTokenProvider(azureConfig, dollyConfig.scope)
 
     private val httpClient = HttpClient(CIO) {
         install(HttpTimeout)
@@ -47,7 +47,7 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
     }
 
     suspend fun hentBrukere(): List<DollyResponsePerson> {
-        val token = tokenProvider.getToken()
+        val token = tokenProvider.getClientCredentialToken()
         val callId = callId
         val brukereForGruppe = httpClient.get(dollyConfig.url.toURL()) {
             url {
@@ -69,11 +69,13 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
             bearerAuth(token)
         }.body<DollyResponsePdl>()
 
-        return brukerlisteJson.data.hentPersonBolk.map { DollyResponsePerson(
-            fødselsnummer = it.ident,
-            navn = "${it.person.navn.first().fornavn} ${it.person.navn.first().etternavn}",
-            fødselsdato = it.person.foedsel.first().foedselsdato
-        ) }
+        return brukerlisteJson.data.hentPersonBolk.map {
+            DollyResponsePerson(
+                fødselsnummer = it.ident,
+                navn = "${it.person.navn.first().fornavn} ${it.person.navn.first().etternavn}",
+                fødselsdato = it.person.foedsel.first().foedselsdato
+            )
+        }
     }
 
     private val callId: String get() = UUID.randomUUID().toString().also { log.info("calling dolly with call-id $it") }

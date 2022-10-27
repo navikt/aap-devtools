@@ -1,9 +1,6 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("jvm") version "1.7.0"
-    id("com.github.johnrengelman.shadow") version "7.1.2"
-    application
+    kotlin("jvm") version "1.7.20"
+    id("io.ktor.plugin") version "2.1.2"
 }
 
 application {
@@ -12,15 +9,14 @@ application {
 
 repositories {
     mavenCentral()
-    maven("https://jitpack.io")
-    maven("https://packages.confluent.io/maven/")
+    maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
 }
 
-val aapLibVersion = "2.1.10"
+val aapLibVersion = "3.5.22"
 val ktorVersion = "2.1.2"
 
 dependencies {
-    implementation("com.github.navikt.aap-libs:ktor-client-auth:$aapLibVersion")
+    implementation("com.github.navikt.aap-libs:ktor-auth-azuread:$aapLibVersion")
     implementation("com.github.navikt.aap-libs:ktor-utils:$aapLibVersion")
     implementation("com.github.navikt.aap-libs:kafka:$aapLibVersion")
 
@@ -28,14 +24,17 @@ dependencies {
     implementation("io.ktor:ktor-server-netty:$ktorVersion")
     implementation("io.ktor:ktor-server-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-server-call-logging:$ktorVersion")
+
     implementation("io.ktor:ktor-serialization-jackson:$ktorVersion")
 
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
     implementation("io.ktor:ktor-client-logging:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
+    implementation("io.ktor:ktor-client-cio:$ktorVersion")
 
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4")
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4.2")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.4")
-    implementation("ch.qos.logback:logback-classic:1.4.1")
+    implementation("ch.qos.logback:logback-classic:1.4.4")
     implementation("net.logstash.logback:logstash-logback-encoder:7.2")
 
     testImplementation(kotlin("test"))
@@ -46,7 +45,7 @@ dependencies {
 }
 
 tasks {
-    withType<KotlinCompile> {
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = "18"
     }
 
@@ -55,12 +54,6 @@ tasks {
         testLogging {
             events("PASSED", "SKIPPED", "FAILED")
         }
-    }
-}
-
-configurations.all {
-    resolutionStrategy {
-        force("org.apache.kafka:kafka-clients:3.2.0")
     }
 }
 
