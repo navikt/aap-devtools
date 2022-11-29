@@ -12,7 +12,7 @@ repositories {
     maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
 }
 
-val aapLibVersion = "3.5.29"
+val aapLibVersion = "3.5.30"
 val ktorVersion = "2.1.3"
 
 dependencies {
