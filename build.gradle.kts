@@ -12,7 +12,7 @@ repositories {
     maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
 }
 
-val aapLibVersion = "3.5.36"
+val aapLibVersion = "3.5.39"
 val ktorVersion = "2.2.2"
 
 dependencies {
@@ -46,7 +46,7 @@ dependencies {
 
 tasks {
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions.jvmTarget = "18"
+        kotlinOptions.jvmTarget = "19"
     }
 
     withType<Test> {
