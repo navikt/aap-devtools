@@ -85,7 +85,7 @@ internal class KafkaMock : KafkaFactory {
 
         override fun offsetsForTimes(timestampsToSearch: Map<TopicPartition, Long>): Map<TopicPartition, OffsetAndTimestamp> {
             return timestampsToSearch.mapValues { (topicPartition, timestamp) ->
-                val topic = Topics.all[topicPartition.topic()] ?: error("ukjent topic")
+                val topic = Topics[topicPartition.topic()]
 
                 val recordsAfterTimestamp = recordsPerTopic[topic]
                     ?.filter { record -> record.partition() == topicPartition.partition() }

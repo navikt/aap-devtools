@@ -17,7 +17,7 @@ import ktor.topic
 internal fun Route.topic(manager: KafkaManager) {
     route("/topics") {
         get {
-            call.respond(Topics.all.keys)
+            call.respond(Topics.all.map { it.name })
         }
     }
 

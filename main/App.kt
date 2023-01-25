@@ -60,9 +60,7 @@ internal fun Application.server(kafka: KafkaFactory = Kafka) {
     val dollyClient = DollyClient(config.dolly, config.azure)
 
     routing {
-        trace {
-            secureLog.info(it.buildText())
-        }
+        trace { secureLog.info(it.buildText()) }
         actuator()
         søker(manager)
         mottaker(manager)
