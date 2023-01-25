@@ -9,6 +9,7 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import no.nav.aap.ktor.client.AzureAdTokenProvider
@@ -62,19 +63,25 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
         val identer = brukereForGruppe.identer.map { it.ident }
         val url = "${dollyConfig.url.toURL()}/pdlperson/identer?identer=${identer.joinToString(",")}"
 
-        val brukerlisteJson = httpClient.get(url) {
-            accept(ContentType.Application.Json)
-            header("Nav-Call-Id", callId)
-            header("Nav-Consumer-Id", "aap_oppgavestyring")
-            bearerAuth(token)
-        }.body<DollyResponsePdl>()
+        val response =
+            httpClient.get(url) {
+                accept(ContentType.Application.Json)
+                header("Nav-Call-Id", callId)
+                header("Nav-Consumer-Id", "aap_oppgavestyring")
+                bearerAuth(token)
+            }
 
-        return brukerlisteJson.data.hentPersonBolk.map {
-            DollyResponsePerson(
-                fødselsnummer = it.ident,
-                navn = "${it.person.navn.first().fornavn} ${it.person.navn.first().etternavn}",
-                fødselsdato = it.person.foedsel.first().foedselsdato
-            )
+        return if (response.status.isSuccess()) {
+                response.body<DollyResponsePdl>().data.hentPersonBolk.map {
+                    DollyResponsePerson(
+                        fødselsnummer = it.ident,
+                        navn = "${it.person.navn.first().fornavn} ${it.person.navn.first().etternavn}",
+                        fødselsdato = it.person.foedsel.first().foedselsdato
+                    )
+                }
+            } else {
+                secureLog.error("${response.status}, ${response.bodyAsText()}")
+                emptyList()
         }
     }
 
