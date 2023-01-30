@@ -6,7 +6,7 @@ data class DollyResponsePdl(val data: DollyResponseData)
 
 data class DollyResponseData(val hentPersonBolk: List<DollyPersonBolk>)
 
-data class DollyPersonBolk(val ident: String, val person: DollyPerson)
+data class DollyPersonBolk(val ident: String, val person: DollyPerson?)
 
 data class DollyPerson(
     val navn: List<Navn>,

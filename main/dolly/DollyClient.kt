@@ -75,8 +75,8 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
                 response.body<DollyResponsePdl>().data.hentPersonBolk.map {
                     DollyResponsePerson(
                         fødselsnummer = it.ident,
-                        navn = "${it.person.navn.first().fornavn} ${it.person.navn.first().etternavn}",
-                        fødselsdato = it.person.foedsel.first().foedselsdato
+                        navn = "${it.person?.navn?.first()?.fornavn} ${it.person?.navn?.first()?.etternavn}",
+                        fødselsdato = it.person?.foedsel?.first()?.foedselsdato ?: LocalDate.now().minusYears(30)
                     )
                 }
             } else {
