@@ -47,12 +47,12 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
         }
     }
 
-    suspend fun hentBrukere(): List<DollyResponsePerson> {
+    suspend fun hentBrukere(gruppeId: String): List<DollyResponsePerson> {
         val token = tokenProvider.getClientCredentialToken()
         val callId = callId
         val brukereForGruppe = httpClient.get(dollyConfig.url.toURL()) {
             url {
-                appendPathSegments("gruppe", "4946")
+                appendPathSegments("gruppe", gruppeId)
             }
             accept(ContentType.Application.Json)
             header("Nav-Call-Id", callId)
