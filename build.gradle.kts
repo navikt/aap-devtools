@@ -1,6 +1,6 @@
 plugins {
     kotlin("jvm") version "1.8.10"
-    id("io.ktor.plugin") version "2.2.2"
+    id("io.ktor.plugin") version "2.2.4"
 }
 
 application {
@@ -12,8 +12,8 @@ repositories {
     maven("https://github-package-registry-mirror.gc.nav.no/cached/maven-release")
 }
 
-val aapLibVersion = "3.5.50"
-val ktorVersion = "2.2.3"
+val aapLibVersion = "3.6.30"
+val ktorVersion = "2.2.4"
 
 dependencies {
     implementation("com.github.navikt.aap-libs:ktor-auth-azuread:$aapLibVersion")
@@ -51,9 +51,6 @@ tasks {
 
     withType<Test> {
         useJUnitPlatform()
-        testLogging {
-            events("PASSED", "SKIPPED", "FAILED")
-        }
     }
 }
 
