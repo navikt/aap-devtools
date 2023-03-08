@@ -35,7 +35,7 @@ dependencies {
     implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.2")
     implementation("ch.qos.logback:logback-classic:1.4.5")
-    implementation("net.logstash.logback:logstash-logback-encoder:7.2")
+    implementation("net.logstash.logback:logstash-logback-encoder:7.3")
 
     testImplementation(kotlin("test"))
     testImplementation("com.github.navikt.aap-libs:kafka-test:$aapLibVersion")
