@@ -8,7 +8,9 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.callloging.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.request.*
 import io.ktor.server.routing.*
+import io.ktor.server.util.*
 import kafka.Kafka
 import kafka.KafkaManager
 import no.nav.aap.kafka.vanilla.KafkaConfig
@@ -53,6 +55,7 @@ internal fun Application.server(kafka: KafkaFactory = Kafka) {
     install(CallLogging) {
         level = Level.INFO
         logger = secureLog
+        filter { call -> call.request.path().startsWith("/actuator").not() }
     }
 
     val config = loadConfig<Config>()
@@ -60,7 +63,6 @@ internal fun Application.server(kafka: KafkaFactory = Kafka) {
     val dollyClient = DollyClient(config.dolly, config.azure)
 
     routing {
-        trace { secureLog.info(it.buildText()) }
         actuator()
         søker(manager)
         mottaker(manager)
