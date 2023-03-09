@@ -9,18 +9,17 @@ import io.ktor.client.plugins.*
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import no.nav.aap.ktor.client.AzureAdTokenProvider
 import no.nav.aap.ktor.client.AzureConfig
 import org.slf4j.LoggerFactory
-import java.net.URI
+import java.net.URL
 import java.time.LocalDate
 import java.util.*
 
 data class DollyConfig(
-    val url: URI,
+    val url: URL,
     val scope: String,
 )
 
@@ -50,29 +49,31 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
     suspend fun hentBrukere(gruppeId: String): List<DollyResponsePerson> {
         val token = tokenProvider.getClientCredentialToken()
         val callId = callId
-        val brukereForGruppe = httpClient.get(dollyConfig.url.toURL()) {
-            url {
-                appendPathSegments("gruppe", gruppeId)
-            }
+
+        val gruppeResponse = httpClient.get("${dollyConfig.url}/gruppe/$gruppeId/page/0") {
+            parameter("pageSize", 20)
             accept(ContentType.Application.Json)
             header("Nav-Call-Id", callId)
             header("Nav-Consumer-Id", "aap_oppgavestyring")
             bearerAuth(token)
-        }.body<DollyResponseGrupper>()
+        }
 
-        val identer = brukereForGruppe.identer.map { it.ident }
-        val url = "${dollyConfig.url.toURL()}/pdlperson/identer?identer=${identer.joinToString(",")}"
+        return if (gruppeResponse.status.isSuccess()) {
+            val identer = gruppeResponse
+                .body<DollyResponseGrupper>()
+                .identer
+                .map(DollyIdent::ident)
+                .joinToString(",")
 
-        val response =
-            httpClient.get(url) {
-                accept(ContentType.Application.Json)
-                header("Nav-Call-Id", callId)
-                header("Nav-Consumer-Id", "aap_oppgavestyring")
-                bearerAuth(token)
-            }
+            val personerResponse = httpClient.get("${dollyConfig.url}/pdlperson/identer?identer=$identer") {
+                    accept(ContentType.Application.Json)
+                    header("Nav-Call-Id", callId)
+                    header("Nav-Consumer-Id", "aap_oppgavestyring")
+                    bearerAuth(token)
+                }
 
-        return if (response.status.isSuccess()) {
-                response.body<DollyResponsePdl>().data.hentPersonBolk.map {
+            if (personerResponse.status.isSuccess()) {
+                personerResponse.body<DollyResponsePdl>().data.hentPersonBolk.map {
                     DollyResponsePerson(
                         fødselsnummer = it.ident,
                         navn = "${it.person?.navn?.first()?.fornavn} ${it.person?.navn?.first()?.etternavn}",
@@ -80,8 +81,12 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
                     )
                 }
             } else {
-                secureLog.error("${response.status}, ${response.bodyAsText()}")
+                secureLog.error("Feilet mot dolly ved henting av personer fra dolly: $personerResponse")
                 emptyList()
+            }
+        } else {
+            secureLog.error("Fikk ikke response ved henting av gruppe $gruppeId fra dolly: $gruppeResponse")
+            emptyList()
         }
     }
 

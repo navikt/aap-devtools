@@ -13,7 +13,9 @@ internal fun Route.deleteAll(manager: KafkaManager) {
         delete {
             val personident = call.parameters.personident
             val topicsToTombstone by lazy { listOf(Topics.søknad, Topics.søker, Topics.mottakere, Topics.vedtak) }
-            val futures = topicsToTombstone.associateWith { manager.produce(it, personident, null) }
+            val futures = topicsToTombstone.associateWith { topic ->
+                manager.produce(topic, personident, null)
+            }
 
             val tombstoneWithStatus = futures.map { (key, future) ->
                 val deleted = try {

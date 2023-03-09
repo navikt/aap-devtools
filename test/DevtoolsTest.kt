@@ -333,5 +333,5 @@ private val envVars = MapApplicationConfig(
     "AZURE_OPENID_CONFIG_TOKEN_ENDPOINT" to "http://localhost",
     "AZURE_APP_CLIENT_SECRET" to "",
     "DOLLY_SCOPE" to "",
-    "DOLLY_URL" to ""
+    "DOLLY_URL" to "http://dolly.mock"
 )
