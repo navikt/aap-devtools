@@ -30,7 +30,9 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
     private val tokenProvider = AzureAdTokenProvider(azureConfig, dollyConfig.scope)
 
     private val httpClient = HttpClient(CIO) {
-        install(HttpTimeout)
+        install(HttpTimeout) {
+            requestTimeoutMillis = 10_000
+        }
         install(HttpRequestRetry)
         install(Logging) {
             level = LogLevel.BODY
