@@ -31,7 +31,7 @@ class DollyClient(private val dollyConfig: DollyConfig, azureConfig: AzureConfig
 
     private val httpClient = HttpClient(CIO) {
         install(HttpTimeout) {
-            requestTimeoutMillis = 10_000
+            requestTimeoutMillis = 30_000
         }
         install(HttpRequestRetry)
         install(Logging) {
