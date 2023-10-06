@@ -13,7 +13,7 @@ repositories {
 }
 
 val aapLibVersion = "3.6.61"
-val ktorVersion = "2.3.4"
+val ktorVersion = "2.3.5"
 
 dependencies {
     implementation("com.github.navikt.aap-libs:ktor-auth-azuread:$aapLibVersion")
